@@ -3,6 +3,7 @@ package com.example.mobilebanking.data.datastore
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.mobilebanking.data.model.User
@@ -62,6 +63,31 @@ class UserPreferences(private val context: Context) {
     suspend fun clearCurrentUser() {
         context.dataStore.edit { prefs ->
             prefs.remove(currentUserKey)
+        }
+    }
+
+    // Keperluan tampilan nomor rekening dan saldo
+
+    // variabel yang terlibat
+    companion object {
+        private val ACCOUNT_NUMBER_KEY = stringPreferencesKey("account_number")
+        private val BALANCE_KEY = intPreferencesKey("balance")
+    }
+
+    val getAccountNumber: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[ACCOUNT_NUMBER_KEY] ?: ""
+        }
+
+    val getBalance: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[BALANCE_KEY] ?: 0
+        }
+
+    suspend fun saveAccountData(accountNumber: String, balance: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[ACCOUNT_NUMBER_KEY] = accountNumber
+            preferences[BALANCE_KEY] = balance
         }
     }
 }

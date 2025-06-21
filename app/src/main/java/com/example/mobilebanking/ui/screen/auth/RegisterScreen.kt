@@ -19,6 +19,8 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
     var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,23 +65,30 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        val context = LocalContext.current
-        val coroutineScope = rememberCoroutineScope()
-
-        Button(onClick = {
-            if (username.isNotEmpty() && password.isNotEmpty()) {
-                viewModel.registerUser(username, password) { result ->
-                    if (result) {
-                        Toast.makeText(context, "Register berhasil", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
-                    } else {
-                        Toast.makeText(context, "Username sudah terdaftar", Toast.LENGTH_SHORT).show()
+        Button(
+            onClick = {
+                when {
+                    username.isBlank() || password.isBlank() -> {
+                        errorMessage = "Username dan password wajib diisi"
+                    }
+                    password != confirmPassword -> {
+                        errorMessage = "Password dan konfirmasi harus sama"
+                    }
+                    else -> {
+                        errorMessage = ""
+                        viewModel.registerUser(username, password) { success ->
+                            if (success) {
+                                Toast.makeText(context, "Register berhasil", Toast.LENGTH_SHORT).show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(context, "Username sudah terdaftar", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
-            } else {
-                Toast.makeText(context, "Username dan password wajib diisi", Toast.LENGTH_SHORT).show()
-            }
-        }) {
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("Register")
         }
     }
