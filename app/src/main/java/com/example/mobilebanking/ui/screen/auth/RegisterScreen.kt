@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.widget.Toast
-import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
@@ -18,8 +17,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var accountNumber by remember { mutableStateOf("") }
-
-    var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -45,7 +42,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
         OutlinedTextField(
             value = accountNumber,
             onValueChange = { accountNumber = it },
-            label = { Text("Account Number") },
+            label = { Text("Nomor Rekening") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -64,7 +61,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
+            label = { Text("Konfirmasi Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )

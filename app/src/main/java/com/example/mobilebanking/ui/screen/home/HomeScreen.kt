@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mobilebanking.ui.navigation.BottomBar
 import com.example.mobilebanking.ui.screen.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

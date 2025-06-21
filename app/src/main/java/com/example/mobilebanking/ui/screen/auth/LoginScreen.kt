@@ -8,9 +8,6 @@ import androidx.compose.ui.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 
@@ -53,7 +50,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             viewModel.loginUser(username, password) { success ->
                 if (success) {
                     Toast.makeText(context, "Login berhasil", Toast.LENGTH_SHORT).show()
-                    navController.navigate("home") {
+                    navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
                 } else {
