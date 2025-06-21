@@ -17,6 +17,8 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var accountNumber by remember { mutableStateOf("") }
+
     var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -41,6 +43,15 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
+            value = accountNumber,
+            onValueChange = { accountNumber = it },
+            label = { Text("Account Number") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
@@ -58,38 +69,26 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        if (errorMessage.isNotEmpty()) {
-            Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        Button(
-            onClick = {
-                when {
-                    username.isBlank() || password.isBlank() -> {
-                        errorMessage = "Username dan password wajib diisi"
-                    }
-                    password != confirmPassword -> {
-                        errorMessage = "Password dan konfirmasi harus sama"
-                    }
-                    else -> {
-                        errorMessage = ""
-                        viewModel.registerUser(username, password) { success ->
-                            if (success) {
-                                Toast.makeText(context, "Register berhasil", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack()
-                            } else {
-                                Toast.makeText(context, "Username sudah terdaftar", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+        Button(onClick = {
+            if (username.isBlank() || password.isBlank() || accountNumber.isBlank()) {
+                Toast.makeText(context, "Semua field harus diisi", Toast.LENGTH_SHORT).show()
+            } else if (password != confirmPassword) {
+                Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.registerUser(username, password, accountNumber) { result ->
+                    if (result) {
+                        Toast.makeText(context, "Registrasi berhasil", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    } else {
+                        Toast.makeText(context, "Username sudah terdaftar", Toast.LENGTH_SHORT).show()
                     }
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            }
+        }) {
             Text("Register")
         }
+
     }
 }

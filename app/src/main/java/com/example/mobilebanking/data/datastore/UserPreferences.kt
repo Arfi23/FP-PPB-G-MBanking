@@ -22,6 +22,7 @@ class UserPreferences(private val context: Context) {
     private val currentUserKey = stringPreferencesKey("current_user")
     private val gson = Gson()
 
+    // Ambil seluruh daftar user
     fun getUserList(): Flow<List<User>> {
         return context.dataStore.data.map { preferences ->
             val json = preferences[userListKey]
@@ -33,6 +34,15 @@ class UserPreferences(private val context: Context) {
         }
     }
 
+    // Ambil satu kali daftar user (untuk keperluan simpan/update)
+    private suspend fun getUserListOnce(): List<User> {
+        val json = context.dataStore.data.map { it[userListKey] ?: "" }.first()
+        if (json.isEmpty()) return emptyList()
+        val type = object : TypeToken<List<User>>() {}.type
+        return gson.fromJson(json, type)
+    }
+
+    // Simpan user baru
     suspend fun saveUser(user: User) {
         context.dataStore.edit { preferences ->
             val currentList = getUserListOnce()
@@ -43,51 +53,43 @@ class UserPreferences(private val context: Context) {
         }
     }
 
-    private suspend fun getUserListOnce(): List<User> {
-        val json = context.dataStore.data.map { it[userListKey] ?: "" }.first()
-        if (json.isEmpty()) return emptyList()
-        val type = object : TypeToken<List<User>>() {}.type
-        return gson.fromJson(json, type)
-    }
-
+    // Ambil username yang sedang login
     fun getCurrentUser(): Flow<String?> {
         return context.dataStore.data.map { it[currentUserKey] }
     }
 
+    // Simpan username yang sedang login
     suspend fun setCurrentUser(username: String) {
         context.dataStore.edit { prefs ->
             prefs[currentUserKey] = username
         }
     }
 
+    // Hapus current user
     suspend fun clearCurrentUser() {
         context.dataStore.edit { prefs ->
             prefs.remove(currentUserKey)
         }
     }
 
-    // Keperluan tampilan nomor rekening dan saldo
-
-    // variabel yang terlibat
-    companion object {
-        private val ACCOUNT_NUMBER_KEY = stringPreferencesKey("account_number")
-        private val BALANCE_KEY = intPreferencesKey("balance")
+    // Ambil objek User dari username yang sedang login
+    suspend fun getCurrentUserObject(): User? {
+        val currentUsername = getCurrentUser().first()
+        val userList = getUserListOnce()
+        return userList.find { it.username == currentUsername }
     }
 
-    val getAccountNumber: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[ACCOUNT_NUMBER_KEY] ?: ""
-        }
-
-    val getBalance: Flow<Int> = context.dataStore.data
-        .map { preferences ->
-            preferences[BALANCE_KEY] ?: 0
-        }
-
-    suspend fun saveAccountData(accountNumber: String, balance: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[ACCOUNT_NUMBER_KEY] = accountNumber
-            preferences[BALANCE_KEY] = balance
+    // Tambahan (opsional): Update saldo user
+    suspend fun updateUserBalance(username: String, newBalance: Int) {
+        context.dataStore.edit { prefs ->
+            val userList = getUserListOnce().toMutableList()
+            val index = userList.indexOfFirst { it.username == username }
+            if (index != -1) {
+                val updatedUser = userList[index].copy(balance = newBalance)
+                userList[index] = updatedUser
+                prefs[userListKey] = gson.toJson(userList)
+            }
         }
     }
+
 }

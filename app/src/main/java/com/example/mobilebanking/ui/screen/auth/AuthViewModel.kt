@@ -13,13 +13,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val userPrefs = UserPreferences(application)
     val userListFlow: Flow<List<User>> = userPrefs.getUserList()
     val currentUserFlow: Flow<String?> = userPrefs.getCurrentUser()
-    val accountNumberFlow = userPrefs.getAccountNumber
-    val balanceFlow = userPrefs.getBalance
+
+    val currentUserData: Flow<User?> = currentUserFlow.flatMapLatest { username ->
+        flow {
+            emit(userPrefs.getUserList().first().find { it.username == username })
+        }
+    }
 
     // Fungsi register dengan username + password
     fun registerUser(
         username: String,
         password: String,
+        accountNumber: String,
         onResult: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
@@ -29,14 +34,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             if (userExists) {
                 onResult(false)
             } else {
-                val accountNumber = generateAccountNumber()
-                val initialBalance = 1_000_000
-
-                val user = User(username, password)
-                userPrefs.saveUser(user)
-                userPrefs.setCurrentUser(username)
-                userPrefs.saveAccountData(accountNumber, initialBalance)
-
+                val randomBalance = (1_000_000..5_000_000).random()
+                val newUser = User(username, password, accountNumber, randomBalance)
+                userPrefs.saveUser(newUser)
                 onResult(true)
             }
         }
@@ -45,18 +45,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     // Fungsi login
     fun loginUser(username: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val existingUsers = userPrefs.getUserList().first()
-            val isValid = existingUsers.any { it.username == username && it.password == password }
-            if (isValid) {
-                userPrefs.setCurrentUser(username) // <-- Simpan current login
+            val users = userPrefs.getUserList().first()
+            val user = users.find { it.username == username && it.password == password }
+            if (user != null) {
+                userPrefs.setCurrentUser(username)
+                onResult(true)
+            } else {
+                onResult(false)
             }
-            onResult(isValid)
-        }
-    }
-
-    fun setLoggedInUser(username: String) {
-        viewModelScope.launch {
-            userPrefs.setCurrentUser(username)
         }
     }
 
@@ -64,30 +60,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             userPrefs.clearCurrentUser()
         }
-    }
-
-    // Utilitas tambahan untuk pendaftaran manual
-    fun saveUser(username: String, password: String) {
-        viewModelScope.launch {
-            val user = User(
-                username = username,
-                password = password
-            )
-            userPrefs.saveUser(user)
-        }
-    }
-
-    fun saveAccountData(accountNumber: String, balance: Int) {
-        viewModelScope.launch {
-            userPrefs.saveAccountData(accountNumber, balance)
-        }
-    }
-
-    // Fungsi membuat nomor rekening acak
-    private fun generateAccountNumber(): String {
-        val prefix = "987"
-        val randomDigits = (1000000..9999999).random()
-        return prefix + randomDigits
     }
 
 }

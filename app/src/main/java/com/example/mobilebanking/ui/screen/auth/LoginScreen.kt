@@ -18,11 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
-
-    // Hard-coded user (nanti bisa diganti DataStore)
-    val validUser = "user1"
-    val validPass = "1234"
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -51,15 +47,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        if (errorMessage.isNotEmpty()) {
-            Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        val context = LocalContext.current
-        val coroutineScope = rememberCoroutineScope()
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(onClick = {
             viewModel.loginUser(username, password) { success ->
@@ -69,7 +57,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                         popUpTo("login") { inclusive = true }
                     }
                 } else {
-                    Toast.makeText(context, "Login gagal: Username atau password salah", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login gagal", Toast.LENGTH_SHORT).show()
                 }
             }
         }) {
@@ -78,8 +66,10 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { navController.navigate("register") }) {
-            Text("Don't have an account? Register")
+        TextButton(onClick = {
+            navController.navigate("register")
+        }) {
+            Text("Belum punya akun? register")
         }
     }
 }

@@ -41,9 +41,7 @@ import com.example.mobilebanking.ui.screen.auth.AuthViewModel
 @Composable
 fun HomeScreen(navController: NavController) {
     val viewModel: AuthViewModel = viewModel()
-    val currentUser by viewModel.currentUserFlow.collectAsState(initial = null)
-    val accountNumber by viewModel.accountNumberFlow.collectAsState(initial = "")
-    val balance by viewModel.balanceFlow.collectAsState(initial = 0)
+    val user by viewModel.currentUserData.collectAsState(initial = null)
     var isBalanceVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
 
@@ -56,15 +54,14 @@ fun HomeScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // <-- penting!
-                .padding(16.dp),         // padding tambahan opsional
+                .padding(paddingValues)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
 
-            // Text("Welcome to Mobile Banking", modifier = androidx.compose.ui.Modifier.padding(16.dp))
-
+            // Header welcome
             Text(
-                text = "Welcome, ${currentUser ?: "Guest"}",
+                text = "Selamat datang, ${user?.username ?: "Guest"}",
                 style = MaterialTheme.typography.headlineSmall
             )
 
@@ -75,14 +72,14 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ){
                 Column{
-                    Text("Account Number", style = MaterialTheme.typography.labelMedium)
-                    Text(text = accountNumber, style = MaterialTheme.typography.bodyLarge)
+                    Text("Nomor Rekening", style = MaterialTheme.typography.labelMedium)
+                    Text(text = user?.accountNumber ?: "-", style = MaterialTheme.typography.bodyLarge)
                 }
                 IconButton(onClick = {
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("accountNumber", accountNumber)
+                    val clip = ClipData.newPlainText("accountNumber", user?.accountNumber ?: "-")
                     clipboard.setPrimaryClip(clip)
-                    Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Disalin ke clipboard", Toast.LENGTH_SHORT).show()
                 }) {
                     Icon(Icons.Default.ContentCopy, contentDescription = "Copy")
                 }
@@ -94,7 +91,7 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = if (isBalanceVisible) "Rp ${balance}" else "Rp ******",
+                    text = if (isBalanceVisible) "Rp ${user?.balance ?: 0}" else "Rp ******",
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -106,7 +103,7 @@ fun HomeScreen(navController: NavController) {
                 }
             }
 
-            // 📦 Menu Card
+            // Menu Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -145,7 +142,6 @@ fun HomeScreen(navController: NavController) {
                 Text("Logout")
             }
         }
-
     }
 }
 
