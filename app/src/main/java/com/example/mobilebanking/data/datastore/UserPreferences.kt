@@ -5,13 +5,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import com.example.mobilebanking.data.model.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import androidx.datastore.preferences.preferencesDataStore
+import com.example.mobilebanking.data.model.Transaction
+import com.example.mobilebanking.data.model.User
+
 
 
 private val Context.dataStore by preferencesDataStore("user_prefs")
@@ -88,6 +90,31 @@ class UserPreferences(private val context: Context) {
                 val updatedUser = userList[index].copy(balance = newBalance)
                 userList[index] = updatedUser
                 prefs[userListKey] = gson.toJson(userList)
+            }
+        }
+    }
+
+    // Fungsi-fungsi di bawah ini untuk keperluan transaksi seperti transfer, QRIS, dan top up
+
+    private fun transactionKeyFor(username: String) = stringPreferencesKey("transactions_$username")
+
+    suspend fun addTransaction(username: String, transaction: Transaction) {
+        val key = transactionKeyFor(username)
+        val existingJson = context.dataStore.data.map { it[key] ?: "" }.first()
+        val type = object : TypeToken<List<Transaction>>() {}.type
+        val currentList = if (existingJson.isNotEmpty()) gson.fromJson<List<Transaction>>(existingJson, type) else emptyList()
+        val updatedList = currentList + transaction
+        context.dataStore.edit { it[key] = gson.toJson(updatedList) }
+    }
+
+    fun getTransactions(username: String): Flow<List<Transaction>> {
+        val key = transactionKeyFor(username)
+        return context.dataStore.data.map { preferences ->
+            val json = preferences[key]
+            if (json.isNullOrEmpty()) emptyList()
+            else {
+                val type = object : TypeToken<List<Transaction>>() {}.type
+                gson.fromJson(json, type)
             }
         }
     }
