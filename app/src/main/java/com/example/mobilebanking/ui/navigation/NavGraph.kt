@@ -13,6 +13,9 @@ import com.example.mobilebanking.ui.screen.auth.*
 import com.example.mobilebanking.ui.screen.home.HomeScreen
 import com.example.mobilebanking.ui.screen.history.HistoryScreen
 import com.example.mobilebanking.ui.screen.profile.ProfileScreen
+import com.example.mobilebanking.ui.screen.transfer.TransferScreen
+import com.example.mobilebanking.ui.screen.qris.QRISScreen
+import com.example.mobilebanking.ui.screen.topup.TopUpScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -23,16 +26,25 @@ fun NavGraph(navController: NavHostController) {
         composable("register") {
             RegisterScreen(navController = navController)
         }
+        composable("transfer") {
+            TransferScreen(navController = navController)
+        }
+        composable("qris") {
+            QRISScreen(navController = navController)
+        }
+        composable("topup") {
+            TopUpScreen(navController = navController)
+        }
 
-        // Bungkus semua halaman utama dengan BottomNavigation
+        // Bungkus semua halaman utama (main) yang memiliki navbar dengan BottomNavWrapper
         composable("main") {
-            BottomNavWrapper(navController)
+            BottomNavWrapper(outerNavController = navController)
         }
     }
 }
 
 @Composable
-fun BottomNavWrapper(navController: NavController) {
+fun BottomNavWrapper(outerNavController: NavController) {
     val innerNavController = rememberNavController()
 
     Scaffold(
@@ -44,13 +56,13 @@ fun BottomNavWrapper(navController: NavController) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(BottomNavItem.Home.route) {
-                HomeScreen(navController = innerNavController)
+                HomeScreen(navController = outerNavController)
             }
             composable(BottomNavItem.History.route) {
-                HistoryScreen(navController = innerNavController) // Buat placeholder
+                HistoryScreen(navController = innerNavController)
             }
             composable(BottomNavItem.Profile.route) {
-                ProfileScreen(navController = innerNavController) // Buat placeholder
+                ProfileScreen(navController = innerNavController)
             }
         }
     }
