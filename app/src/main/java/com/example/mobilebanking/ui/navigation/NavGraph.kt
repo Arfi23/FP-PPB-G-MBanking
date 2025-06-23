@@ -59,7 +59,7 @@ fun BottomNavWrapper(outerNavController: NavController) {
                 HomeScreen(navController = outerNavController)
             }
             composable(BottomNavItem.History.route) {
-                HistoryScreen(navController = innerNavController)
+                HistoryScreen()
             }
             composable(BottomNavItem.Profile.route) {
                 ProfileScreen(navController = innerNavController)

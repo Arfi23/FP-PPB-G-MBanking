@@ -145,10 +145,10 @@ fun TransferScreen(navController: NavController, viewModel: AuthViewModel = view
                         viewModel.addTransactionForUser(
                             username = recipientUser.username,
                             transaction = Transaction(
-                                type = "Transfer dari $currentAccountNumber",
+                                type = "Transfer dari $currentAccountNumber (${selectedBank})",
                                 amount = amount,
                                 dateTime = getCurrentDateTime(),
-                                recipient = currentAccountNumber ?: "",
+                                recipient = targetAccountNumber,
                                 status = "Dana Masuk"
                             )
                         )
