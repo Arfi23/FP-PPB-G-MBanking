@@ -134,14 +134,14 @@ fun HomeScreen(navController: NavController) {
             }
 
             // Tombol Logout Temporary
-            Button(onClick = {
-                viewModel.logout()
-                navController.navigate("login") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }) {
-                Text("Logout")
-            }
+//            Button(onClick = {
+//                viewModel.logout()
+//                navController.navigate("login") {
+//                    popUpTo("home") { inclusive = true }
+//                }
+//            }) {
+//                Text("Logout")
+//            }
         }
     }
 }

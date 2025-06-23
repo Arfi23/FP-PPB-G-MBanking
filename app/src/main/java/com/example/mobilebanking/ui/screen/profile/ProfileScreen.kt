@@ -1,29 +1,62 @@
 package com.example.mobilebanking.ui.screen.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import com.example.mobilebanking.R
 import com.example.mobilebanking.ui.navigation.BottomBar
+import com.example.mobilebanking.ui.screen.auth.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Profil") })
-        }
-    ) { padding ->
-        Box(
+fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavController) {
+    val currentUser by viewModel.currentUserData.collectAsState(initial = null)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        // verticalArrangement = Arrangement.spacedBy(24.dp)
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Profil", style = MaterialTheme.typography.headlineMedium)
+
+        Image(
+            painter = painterResource(id = R.drawable.userprofile),
+            contentDescription = "Foto Profil",
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
+                .size(120.dp)
+                .clip(CircleShape)
+        )
+
+        currentUser?.let { user ->
+            Text("Username: ${user.username}")
+            Text("Account Number: ${user.accountNumber}")
+            Text("Saldo: Rp ${user.balance}")
+        }
+
+        Spacer(modifier = Modifier.weight(1f)) // Mendorong tombol ke bawah
+
+        Button(
+            onClick = {
+                viewModel.logout()
+                navController.navigate("login") {
+                    popUpTo("main") { inclusive = true }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ini adalah halaman profil", style = MaterialTheme.typography.titleMedium)
+            Text("Logout")
         }
     }
 }
