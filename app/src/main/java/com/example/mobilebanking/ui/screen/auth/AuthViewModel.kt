@@ -92,4 +92,17 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    // Fungsi untuk menambah saldo user penerima transferan
+    fun increaseBalance(username: String, newBalance: Int) {
+        viewModelScope.launch {
+            userPrefs.updateUserBalance(username, newBalance)
+        }
+    }
+
+    fun addTransactionForUser(username: String, transaction: Transaction) {
+        viewModelScope.launch {
+            userPrefs.addTransaction(username, transaction)
+        }
+    }
 }
