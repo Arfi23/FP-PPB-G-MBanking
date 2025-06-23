@@ -26,10 +26,12 @@ fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavCont
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        // verticalArrangement = Arrangement.spacedBy(24.dp)
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+        // horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Profil", style = MaterialTheme.typography.headlineMedium)
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         Image(
             painter = painterResource(id = R.drawable.userprofile),
@@ -38,6 +40,8 @@ fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavCont
                 .size(120.dp)
                 .clip(CircleShape)
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         currentUser?.let { user ->
             Text("Username: ${user.username}")
