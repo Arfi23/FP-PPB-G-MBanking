@@ -1,6 +1,7 @@
 package com.example.mobilebanking.ui.screen.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.example.mobilebanking.R
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
@@ -21,8 +24,21 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_efpe),
+            contentDescription = "Logo Aplikasi",
+            modifier = Modifier
+                .size(240.dp)
+                .padding(bottom = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))

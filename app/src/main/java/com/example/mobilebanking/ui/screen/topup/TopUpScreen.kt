@@ -47,6 +47,8 @@ fun TopUpScreen(navController: NavController, viewModel: AuthViewModel = viewMod
     ) {
         Text("Top Up E-Wallet", style = MaterialTheme.typography.headlineMedium)
 
+        Spacer(modifier = Modifier.height(100.dp))
+
         // Dropdown E-Wallet
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(

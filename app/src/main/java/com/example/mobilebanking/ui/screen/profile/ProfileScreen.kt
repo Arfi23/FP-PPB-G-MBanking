@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.example.mobilebanking.R
 import com.example.mobilebanking.ui.navigation.BottomBar
@@ -26,8 +27,8 @@ fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavCont
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-        // horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Profil", style = MaterialTheme.typography.headlineMedium)
 
@@ -37,7 +38,7 @@ fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavCont
             painter = painterResource(id = R.drawable.userprofile),
             contentDescription = "Foto Profil",
             modifier = Modifier
-                .size(120.dp)
+                .size(240.dp)
                 .clip(CircleShape)
         )
 
@@ -58,6 +59,10 @@ fun ProfileScreen(viewModel: AuthViewModel = viewModel(), navController: NavCont
                     popUpTo("main") { inclusive = true }
                 }
             },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red,
+                contentColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Logout")

@@ -10,6 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.mobilebanking.R
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
@@ -26,6 +29,17 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.logo_efpe),
+            contentDescription = "Logo Aplikasi",
+            modifier = Modifier
+                .size(120.dp)
+                .padding(bottom = 16.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+
         Text(text = "Register", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))

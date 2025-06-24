@@ -46,6 +46,8 @@ fun TransferScreen(navController: NavController, viewModel: AuthViewModel = view
     ) {
         Text("Transfer Antar Rekening", style = MaterialTheme.typography.headlineMedium)
 
+        Spacer(modifier = Modifier.height(100.dp))
+
         // Dropdown Bank Tujuan
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
